@@ -1,6 +1,6 @@
 pub mod cli;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 pub const BASE_URL: &str = "https://brisbane.waste-info.com.au/api/v1/";
 
@@ -9,7 +9,7 @@ pub fn get_url(filename: &str) -> String {
 }
 
 #[repr(u8)]
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(from = "u8")]
 pub enum CollectionDay {
     Sunday,
@@ -57,6 +57,7 @@ impl From<u8> for CollectionDay {
 pub struct Locality {
     pub id: u32,
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub postcode: Option<String>,
     pub council: String,
 }
@@ -95,11 +96,14 @@ pub struct Properties {
     pub properties: Vec<Property>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[allow(dead_code)]
 pub struct BinDay {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     pub color: String,
     #[serde(rename = "textColor")]
@@ -110,13 +114,16 @@ pub struct BinDay {
     pub event_type: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[allow(dead_code)]
 pub struct BinProperty {
     pub collection_day: CollectionDay,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub collection_day_2: Option<CollectionDay>,
     pub zone: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub shs: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub bin_bank_id: Option<String>,
     pub clean_up_code: String,
     pub address: String,
@@ -124,7 +131,7 @@ pub struct BinProperty {
     pub collections: Vec<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[allow(dead_code)]
 pub struct BinData {
     pub property: BinProperty,

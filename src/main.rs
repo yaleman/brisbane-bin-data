@@ -265,5 +265,8 @@ async fn main() {
         }
     };
 
-    println!("{:#?}", bin_data);
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&bin_data).expect("Failed to serialize bin data")
+    );
 }
