@@ -8,7 +8,6 @@ pub fn get_url(filename: &str) -> String {
     format!("{}{}", BASE_URL, filename)
 }
 
-#[repr(u8)]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(from = "u8")]
 pub enum CollectionDay {
@@ -33,6 +32,13 @@ impl From<u8> for CollectionDay {
             6 => CollectionDay::Saturday,
             _ => panic!("Invalid day of the week"),
         }
+    }
+}
+
+impl std::fmt::Display for CollectionDay {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let day = format!("{:?}", self);
+        write!(f, "{}", day.split("::").last().ok_or(std::fmt::Error)?)
     }
 }
 

@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use std::collections::HashSet;
 use std::str::FromStr;
 
 use brisbane_bin_data::cli::{AddressData, Cli};
@@ -267,8 +268,23 @@ async fn main() {
         }
     };
 
-    println!(
-        "{}",
-        serde_json::to_string_pretty(&bin_data).expect("Failed to serialize bin data")
-    );
+    if cli.show_day {
+        let (bindata, _days) = bin_data;
+        let mut days = HashSet::new();
+
+        bindata.dow.iter().for_each(|d| {
+            days.insert(d.to_string());
+        });
+        bindata.days_of_week.iter().for_each(|d| {
+            days.insert(d.to_string());
+        });
+        for day in days {
+            println!("{}", day);
+        }
+    } else {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&bin_data).expect("Failed to serialize bin data")
+        );
+    }
 }

@@ -8,9 +8,13 @@ pub struct Cli {
     #[clap(long)]
     /// Enable debug logging
     pub debug: bool,
-    /// Just go straight to the data
+    /// Just go straight to the data if you know your property ID (it's in the 'full' output)
     #[clap(long, short)]
     pub property_id: Option<u64>,
+
+    /// Just show my bin day(s), might return a list if you're lucky enough to have more than one!
+    #[clap(long, short)]
+    pub show_day: bool,
 }
 
 pub struct AddressData {
