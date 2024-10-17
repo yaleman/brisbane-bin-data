@@ -21,22 +21,6 @@ pub enum CollectionDay {
     Saturday,
 }
 
-// impl TryFrom<u8> for CollectionDays {
-//     type Error = String;
-//     fn try_from(item: u8) -> Result<Self, Self::Error> {
-//         match item {
-//             0 => Ok(CollectionDays::Sunday),
-//             1 => Ok(CollectionDays::Monday),
-//             2 => Ok(CollectionDays::Tuesday),
-//             3 => Ok(CollectionDays::Wednesday),
-//             4 => Ok(CollectionDays::Thursday),
-//             5 => Ok(CollectionDays::Friday),
-//             6 => Ok(CollectionDays::Saturday),
-//             _ => Err("Invalid day of the week".to_string()),
-//         }
-//     }
-// }
-
 impl From<u8> for CollectionDay {
     fn from(item: u8) -> Self {
         match item {
@@ -117,6 +101,8 @@ pub struct BinDay {
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(dead_code)]
 pub struct BinProperty {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<u64>,
     pub collection_day: CollectionDay,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub collection_day_2: Option<CollectionDay>,

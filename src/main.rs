@@ -147,8 +147,10 @@ impl Data {
             }
         };
 
-        let bin_property: BinData = serde_json::from_value(bin_property)
+        let mut bin_property: BinData = serde_json::from_value(bin_property)
             .map_err(|err| format!("Failed to parse property data! {:?}", err))?;
+
+        bin_property.property.id = Some(*property_id);
 
         let mut bin_days: Vec<BinDay> = Vec::new();
 
