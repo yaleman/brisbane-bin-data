@@ -15,6 +15,12 @@ pub struct Cli {
     /// Just show my bin day(s), might return a list if you're lucky enough to have more than one!
     #[clap(long, short)]
     pub show_day: bool,
+    /// Just show future dates
+    #[clap(long, short)]
+    pub future: bool,
+    /// Show pretty data instead of JSON
+    #[clap(long, short = 'P')]
+    pub pretty: bool,
 }
 
 pub struct AddressData {

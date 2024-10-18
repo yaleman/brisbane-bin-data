@@ -268,18 +268,59 @@ async fn main() {
         }
     };
 
-    if cli.show_day {
-        let (bindata, _days) = bin_data;
-        let mut days = HashSet::new();
+    let (bindata, bin_days) = (bin_data.0.clone(), bin_data.1.clone());
+    let mut days = HashSet::new();
 
-        bindata.dow.iter().for_each(|d| {
-            days.insert(d.to_string());
-        });
-        bindata.days_of_week.iter().for_each(|d| {
-            days.insert(d.to_string());
-        });
+    bindata.dow.iter().for_each(|d| {
+        days.insert(d);
+    });
+    bindata.days_of_week.iter().for_each(|d| {
+        days.insert(d);
+    });
+
+    if cli.show_day {
         for day in days {
             println!("{}", day);
+        }
+    } else if cli.pretty {
+        println!("{}", bindata.property);
+
+        let mut bin_days_sorted = bin_days
+            .iter()
+            .filter(|day| {
+                if cli.future {
+                    match day.get_start_date() {
+                        Ok(val) => {
+                            if val < time::OffsetDateTime::now_utc().date() {
+                                return false;
+                            }
+                        }
+                        Err(_) => return false,
+                    }
+                }
+                true
+            })
+            .collect::<Vec<&BinDay>>();
+
+        bin_days_sorted.sort_by_key(|f| {
+            f.get_start_date()
+                .unwrap_or(time::OffsetDateTime::now_utc().date())
+        });
+        for day in bin_days_sorted {
+            if cli.future {
+                match day.get_start_date() {
+                    Ok(val) => {
+                        if val < time::OffsetDateTime::now_utc().date() {
+                            continue;
+                        }
+                    }
+                    Err(_) => continue,
+                }
+                if day.get_start_date().is_err() {
+                    continue;
+                }
+            }
+            println!("- {}", day);
         }
     } else {
         println!(
