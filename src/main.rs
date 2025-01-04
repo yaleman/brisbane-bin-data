@@ -12,7 +12,7 @@ use brisbane_bin_data::{
     get_url, BinData, BinDay, Localities, Locality, Properties, Property, Street, Streets,
 };
 use time::format_description;
-use time::util::days_in_year_month;
+use time::util::days_in_month;
 
 struct Data {
     client: reqwest::Client,
@@ -107,7 +107,7 @@ impl Data {
         }
 
         let end = time::OffsetDateTime::now_utc();
-        let days_of_month = days_in_year_month(end.year(), end.month());
+        let days_of_month = days_in_month(end.month(), end.year());
         let end = end.replace_date(
             time::Date::from_calendar_date(end.year(), end.month(), days_of_month)
                 .map_err(|err| format!("Failed to calculate end date! {:?}", err))?,
