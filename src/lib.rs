@@ -8,7 +8,7 @@ use time::{format_description, Date};
 pub const BASE_URL: &str = "https://brisbane.waste-info.com.au/api/v1/";
 
 pub fn get_url(filename: &str) -> String {
-    format!("{}{}", BASE_URL, filename)
+    format!("{BASE_URL}{filename}")
 }
 
 #[repr(u8)]
@@ -41,7 +41,7 @@ impl From<u8> for CollectionDay {
 
 impl std::fmt::Display for CollectionDay {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let day = format!("{:?}", self);
+        let day = format!("{self:?}");
         write!(f, "{}", day.split("::").last().ok_or(std::fmt::Error)?)
     }
 }
@@ -118,7 +118,7 @@ impl std::fmt::Display for BinDay {
                 .unwrap_or(self.start.clone())
         )?;
         if let Some(name) = &self.name {
-            write!(f, "{} ", name)?
+            write!(f, "{name} ")?
         }
         write!(f, "{}", self.event_type)
     }
@@ -154,17 +154,17 @@ pub struct BinProperty {
 impl Display for BinProperty {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if let Some(id) = self.id {
-            writeln!(f, "Property ID: {}", id)?;
+            writeln!(f, "Property ID: {id}")?;
         }
         writeln!(f, "Collection Day: {}", self.collection_day)?;
         if let Some(collection_day_2) = &self.collection_day_2 {
-            writeln!(f, "Collection Day 2: {}", collection_day_2)?;
+            writeln!(f, "Collection Day 2: {collection_day_2}")?;
         }
         if let Some(bin_bank_id) = &self.bin_bank_id {
-            writeln!(f, "Bin Bank ID: {}", bin_bank_id)?;
+            writeln!(f, "Bin Bank ID: {bin_bank_id}")?;
         }
         if let Some(shs) = &self.shs {
-            writeln!(f, "SHS: {}", shs)?;
+            writeln!(f, "SHS: {shs}")?;
         }
         write!(f, "Service Type: {}", self.service_type)?;
         if !self.collections.is_empty() {
