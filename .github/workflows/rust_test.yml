@@ -23,6 +23,8 @@ jobs:
           sudo apt-get update && \
           sudo apt-get install -y \
             libssl-dev
+      - name: Check clap is happy
+        run: cargo run -- --help
       - name: "Run cargo test"
         run: cargo test
       - name: "Build the workspace"
