@@ -1,9 +1,13 @@
+//! Cli Interface
 use clap::Parser;
+
+use crate::AddressData;
 
 #[derive(Parser)]
 #[command(version, about)]
 /// Parses the Brisbane City Council bin data API
 pub struct Cli {
+    /// The address to query, in the format "123 drury lane, suburb"
     pub address: Option<String>,
     #[clap(long)]
     /// Enable debug logging
@@ -23,46 +27,36 @@ pub struct Cli {
     pub pretty: bool,
 }
 
-pub struct AddressData {
-    pub street: String,
-    pub address: String,
-    pub suburb: String,
+impl Cli {
+    /// Get the parsed address data
+    pub fn get_data(&self) -> Result<AddressData, String> {
+        if let Some(address) = &self.address {
+            AddressData::try_from(address.clone())
+        } else {
+            Err("No address provided".to_string())
+        }
+    }
 }
 
-impl Cli {
-    pub fn get_data(&self) -> Result<AddressData, String> {
-        let address = match &self.address {
-            Some(s) => s,
-            None => return Err("No address provided".to_string()),
-        };
-        let mut res = address.split(',').map(|s| s.trim());
-        let address = match res.next() {
-            Some(s) => s,
-            None => {
-                return Err(
-                    "No street provided, specify address like 123 drury lane, suburb".to_string(),
-                )
-            }
-        };
+#[cfg(test)]
+mod tests {
 
-        let street = address
-            .split_whitespace()
-            .skip(1)
-            .collect::<Vec<&str>>()
-            .join(" ");
+    use super::*;
 
-        let suburb = match res.next() {
-            Some(s) => s,
-            None => {
-                return Err(
-                    "No suburb provided, specify address like 123 drury lane, suburb".to_string(),
-                )
-            }
-        };
-        Ok(AddressData {
-            street: street.to_string(),
-            address: address.to_string(),
-            suburb: suburb.to_string(),
-        })
+    #[test]
+    fn test_cli() {
+        let testval =
+            Cli::try_parse_from(["test", "123 drury lane, suburb"]).expect("Failed to parse CLI");
+        let data = testval.get_data();
+        assert!(data.is_ok(), "Failed to get data from CLI: {:?}", data);
+
+        let address = data.expect("Failed to get address data");
+        assert_eq!(address.address, "123 drury lane");
+        assert_eq!(address.street, "drury lane");
+        assert_eq!(address.suburb, "suburb");
+        assert_eq!(address.num, "123");
+
+        let testval = Cli::try_parse_from(["test"]).expect("Failed to parse CLI");
+        assert!(testval.get_data().is_err());
     }
 }
