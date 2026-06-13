@@ -611,6 +611,7 @@ mod tests {
             if day < 7 {
                 assert!(collection_day.is_ok());
                 let collection_day = collection_day.expect("But we just checked it should be ok!");
+                let _ = format!("{}", collection_day);
                 assert_eq!(collection_day as u8, day);
             } else {
                 assert!(collection_day.is_err());
